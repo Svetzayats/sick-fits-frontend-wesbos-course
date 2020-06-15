@@ -13,9 +13,9 @@ const REQUEST_RESET_MUTATION = gql`
     }
 `;
 
-class Signin extends Component {
+class RequestReset extends Component {
     state = {
-        email: '' 
+        email: ''
     };
     saveToState = (event) => {
         this.setState({
@@ -26,26 +26,29 @@ class Signin extends Component {
         return (
             <Mutation mutation={REQUEST_RESET_MUTATION} variables={this.state}>
                 {(reset, { error, loading, called }) => (
-            <Form method="post" onSubmit={async (e) => {
-                e.preventDefault();
-                const successMessage = await reset();
-                this.setState({email: ''});
-            }}>
-                <fieldset disabled={loading} aria-busy={loading}>
-                    <h2>Reset your password</h2>
-                    <Error error={error} />
-                    {!error && !loading && called && <p>Success! Check your email for a reset link!</p>}
-                    <label htmlFor="email">
-                        Email
-                        <input type="email" name="email" placeholder="email" value={this.state.email} onChange={this.saveToState}/>
-                    </label>
-                    <button type="submit">Reset</button>
-                </fieldset>
-            </Form>)
-            }
+                    <Form method="post"
+                        data-test="form"
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            const successMessage = await reset();
+                            this.setState({ email: '' });
+                        }}>
+                        <fieldset disabled={loading} aria-busy={loading}>
+                            <h2>Reset your password</h2>
+                            <Error error={error} />
+                            {!error && !loading && called && <p>Success! Check your email for a reset link!</p>}
+                            <label htmlFor="email">
+                                Email
+                        <input type="email" name="email" placeholder="email" value={this.state.email} onChange={this.saveToState} />
+                            </label>
+                            <button type="submit">Reset</button>
+                        </fieldset>
+                    </Form>)
+                }
             </Mutation>
         );
     }
 }
 
-export default Signin;
+export default RequestReset;
+export { REQUEST_RESET_MUTATION };

@@ -30,9 +30,8 @@ const CREATE_ORDER_MUTATION = gql`
 class TakeMyMoney extends React.Component {
     onToken = async (res, createOrder) => {
         NProgress.start();
-        console.log(res);
         //manually call the mutation
-         const order = await createOrder({
+        const order = await createOrder({
             variables: {
                 token: res.id
             }
@@ -50,26 +49,30 @@ class TakeMyMoney extends React.Component {
     render() {
         return (
             <User>
-                {({ data: { me } }) => (
-                    <Mutation mutation={CREATE_ORDER_MUTATION}
-                        refetchQueries={[{ query: CURRENT_USER_QUERY }]}>
-                        {createOrder => (
-                            <StripeCheckout amount={calcTotalPrice(me.cart)}
-                                name="Sick Fits"
-                                description={`Order of ${totalItems(me.cart)} items`}
-                                image={me.cart.length && me.cart[0].item && me.cart[0].item.image}
-                                stripeKey="pk_test_kX3DP8Lqqc8WVMoIvrGQP58U00LTx2flZ3"
-                                currency="USD"
-                                email={me.email}
-                                token={res => this.onToken(res, createOrder)}>
-                                {this.props.children}
-                            </StripeCheckout>
-                        )}
-                    </Mutation>
-                )}
+                {({ data: { me }, loading }) => {
+                    if (loading) return null;
+                    return (
+                        <Mutation mutation={CREATE_ORDER_MUTATION}
+                            refetchQueries={[{ query: CURRENT_USER_QUERY }]}>
+                            {createOrder => (
+                                <StripeCheckout amount={calcTotalPrice(me.cart)}
+                                    name="Sick Fits"
+                                    description={`Order of ${totalItems(me.cart)} items`}
+                                    image={me.cart.length && me.cart[0].item && me.cart[0].item.image}
+                                    stripeKey="pk_test_kX3DP8Lqqc8WVMoIvrGQP58U00LTx2flZ3"
+                                    currency="USD"
+                                    email={me.email}
+                                    token={res => this.onToken(res, createOrder)}>
+                                    {this.props.children}
+                                </StripeCheckout>
+                            )}
+                        </Mutation>
+                    )
+                }}
             </User>
         )
     }
 }
 
 export default TakeMyMoney;
+export { CREATE_ORDER_MUTATION };
